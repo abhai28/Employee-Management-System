@@ -1,14 +1,7 @@
-import Header from "./components/Header/Header";
-import EmployeeTable from "./components/Table/Table";
+import ListEmployee from "./components/ListEmployee";
 
 function App() {
-  return (
-    <div className="container">
-      <Header />
-      <h2>List of Employees</h2>
-      <EmployeeTable />
-    </div>
-  );
+  return <ListEmployee />;
 }
 
 export default App;
