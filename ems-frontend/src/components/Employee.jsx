@@ -1,6 +1,10 @@
-import { useState } from "react";
-import { createEmployee } from "../services/EmployeeService";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import {
+  createEmployee,
+  getEmployee,
+  updateEmployee,
+} from "../services/EmployeeService";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function Employee() {
   const [firstName, setFirstName] = useState("");
@@ -11,8 +15,24 @@ export default function Employee() {
     lastName: "",
     email: "",
   });
-
+  const { id } = useParams();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (id) {
+      getEmployee(id)
+        .then((response) => {
+          const employee = response.data;
+          setFirstName(employee.firstName);
+          setLastName(employee.lastName);
+          setEmail(employee.email);
+        })
+        .catch((error) => {
+          console.error("Error in getting employee: ", error);
+          alert("Error in getting employee: " + error);
+        });
+    }
+  }, [id]);
 
   function onChangeFirstName(event) {
     setFirstName(event.target.value);
@@ -30,15 +50,27 @@ export default function Employee() {
     event.preventDefault();
     if (validateForm()) {
       const employee = { firstName, lastName, email };
-      createEmployee(employee)
-        .then((response) => {
-          console.log("Employee created successfully: ", response.data);
-          navigate("/employees");
-        })
-        .catch((error) => {
-          console.error("Error in creating employee: ", error);
-          alert("Error in creating employee: " + error);
-        });
+      if (id) {
+        updateEmployee(id, employee)
+          .then((response) => {
+            console.log("Employee updated successfully: ", response.data);
+            navigate("/employees");
+          })
+          .catch((error) => {
+            console.error("Error in updating employee: ", error);
+            alert("Error in updating employee: " + error);
+          });
+      } else {
+        createEmployee(employee)
+          .then((response) => {
+            console.log("Employee created successfully: ", response.data);
+            navigate("/employees");
+          })
+          .catch((error) => {
+            console.error("Error in creating employee: ", error);
+            alert("Error in creating employee: " + error);
+          });
+      }
     }
   }
 
@@ -69,13 +101,21 @@ export default function Employee() {
     return valid;
   }
 
+  function pageTitle() {
+    if (id) {
+      return <h2 className="text-center">Update Employee</h2>;
+    } else {
+      return <h2 className="text-center">Add Employee</h2>;
+    }
+  }
+
   return (
     <div className="container">
       <br />
       <br />
       <div className="row">
         <div className="card col-md-6 offset-md-3 offset-md-3">
-          <h2 className="text-center">Add Employee</h2>
+          {pageTitle()}
           <div className="card-body">
             <form>
               <div className="form-group mb-2">

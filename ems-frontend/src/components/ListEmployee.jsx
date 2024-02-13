@@ -19,6 +19,10 @@ export default function ListEmployee() {
     navigate("/add-employee");
   }
 
+  function updateEmployee(id) {
+    navigate(`/edit-employee/${id}`);
+  }
+
   return (
     <div>
       <h2 className="text-center">List of Employees</h2>
@@ -32,6 +36,7 @@ export default function ListEmployee() {
             <th>Employee First Name</th>
             <th>Employee Last Name</th>
             <th>Employee Email Id</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -42,6 +47,14 @@ export default function ListEmployee() {
                 <td>{employee.firstName}</td>
                 <td>{employee.lastName}</td>
                 <td>{employee.email}</td>
+                <td>
+                  <button
+                    className="btn btn-info"
+                    onClick={() => updateEmployee(employee.id)}
+                  >
+                    Update
+                  </button>
+                </td>
               </tr>
             );
           })}
